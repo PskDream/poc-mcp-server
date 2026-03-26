@@ -126,7 +126,28 @@ pytest tests/test_tasks.py -v
 | `update_task_status` | อัปเดตเฉพาะ status |
 | `delete_task` | ลบ task |
 
-### Run MCP Inspector
+### Endpoint
+
+MCP server รันรวมกับ FastAPI บน port เดียวกัน:
+
+```
+POST http://localhost:8000/mcp
+```
+
+### Client Config (Claude Desktop)
+
+```json
+{
+  "mcpServers": {
+    "todo": {
+      "type": "http",
+      "url": "http://localhost:8000/mcp"
+    }
+  }
+}
+```
+
+### Run MCP Inspector (dev)
 
 ```bash
 mcp dev app/mcp_server.py

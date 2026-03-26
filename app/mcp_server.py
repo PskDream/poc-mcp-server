@@ -6,20 +6,12 @@ from mcp.server.fastmcp import FastMCP
 from datetime import datetime
 from typing import Optional
 
-from app.database import SessionLocal
+from app.database import get_db
 from app.models.task import StatusEnum, PriorityEnum
 from app.schemas.task import TaskCreate, TaskUpdate
 from app.services import task_service
 
-mcp = FastMCP("Todo Management")
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+mcp = FastMCP("Todo Management", stateless_http=True, streamable_http_path="/")
 
 
 def _db():
@@ -122,4 +114,4 @@ def _task_to_dict(task) -> dict:
 
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(transport="streamable-http")

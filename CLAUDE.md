@@ -9,8 +9,8 @@ Todo Management Backend POC — a REST API for task management built with Python
 ## Setup
 
 ```bash
-python -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
 alembic upgrade head
@@ -43,15 +43,18 @@ API docs auto-generated at `http://localhost:8000/docs` (Swagger) and `/redoc`.
 
 ```
 app/
-├── main.py           # FastAPI app entry point
-├── database.py       # SQLAlchemy engine + session setup
-├── models/task.py    # SQLAlchemy ORM model
-├── schemas/task.py   # Pydantic v2 request/response schemas
-├── routers/tasks.py  # Route definitions for /api/v1/tasks
-└── services/task_service.py  # Business logic layer
+├── main.py                  # FastAPI app entry point + lifespan (DB init + MCP session)
+├── database.py              # SQLAlchemy engine + session setup
+├── models/task.py           # SQLAlchemy ORM model (StatusEnum, PriorityEnum)
+├── schemas/task.py          # Pydantic v2 request/response schemas
+├── routers/tasks.py         # Route definitions for /api/v1/tasks
+├── services/task_service.py # Business logic layer
+└── mcp_server.py            # MCP server (Streamable HTTP), mounted at /mcp
 ```
 
-Layered architecture: routers call services, services interact with the database via SQLAlchemy ORM models. Pydantic schemas are used for input validation and response serialization (separate from ORM models).
+Layered architecture: routers and MCP tools both call `task_service.py` — no duplicate logic. Pydantic schemas are used for input validation and response serialization (separate from ORM models).
+
+MCP server uses `stateless_http=True` and is mounted as a sub-app on FastAPI via `app.mount("/mcp", mcp.streamable_http_app())`. The MCP session manager is started inside FastAPI's lifespan.
 
 ## Data Model
 
@@ -62,6 +65,18 @@ Layered architecture: routers call services, services interact with the database
 All task endpoints under `/api/v1/tasks`. `GET /api/v1/tasks` supports query params: `status`, `priority`, `due_before`, `sort_by`, `order`.
 
 Status can be updated independently via `PATCH /api/v1/tasks/{id}/status`.
+
+## MCP Server
+
+MCP endpoint: `http://localhost:8000/mcp` (Streamable HTTP transport, stateless)
+
+Tools: `list_tasks`, `get_task`, `create_task`, `update_task`, `update_task_status`, `delete_task`
+
+Dev/inspect:
+```bash
+mcp dev app/mcp_server.py
+# In Inspector UI: Command=.venv/bin/python, Args=app/mcp_server.py
+```
 
 ## TODO
 View todos in [TODO.md](TODO.md), after tasks are completed pls checked mark them.

@@ -3,12 +3,14 @@ from contextlib import asynccontextmanager
 
 from app.database import engine, Base
 from app.routers import tasks
+from app.mcp_server import mcp
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
-    yield
+    async with mcp.session_manager.run():
+        yield
 
 
 app = FastAPI(
@@ -18,3 +20,4 @@ app = FastAPI(
 )
 
 app.include_router(tasks.router)
+app.mount("/mcp", mcp.streamable_http_app())
