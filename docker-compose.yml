@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    environment:
+      - DATABASE_URL=sqlite:///./todo.db
+      - APP_ENV=production
+      - DEBUG=false
+    volumes:
+      - db_data:/app/todo.db
+
+volumes:
+  db_data:
