@@ -111,6 +111,33 @@ pytest tests/test_tasks.py -v
 
 ---
 
+## MCP Server
+
+`app/mcp_server.py` expose ทุก operation ของ Todo เป็น MCP tools สำหรับใช้กับ AI agents
+
+### Tools
+
+| Tool | Description |
+|---|---|
+| `list_tasks` | ดึงรายการ task พร้อม filter/sort |
+| `get_task` | ดึง task ตาม `task_id` |
+| `create_task` | สร้าง task ใหม่ |
+| `update_task` | แก้ไข task (ทุก field optional) |
+| `update_task_status` | อัปเดตเฉพาะ status |
+| `delete_task` | ลบ task |
+
+### Run MCP Inspector
+
+```bash
+mcp dev app/mcp_server.py
+```
+
+เปิด browser ที่ URL ที่แสดงใน terminal แล้วตั้งค่า:
+- **Command:** `.venv/bin/python`
+- **Arguments:** `app/mcp_server.py`
+
+---
+
 ## Roadmap (หลัง POC)
 
 - [ ] Authentication (JWT)

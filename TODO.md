@@ -61,3 +61,21 @@
 - [x] รัน `pytest --cov=app --cov-report=term-missing` ผ่านทั้งหมด
 - [x] รัน server และทดสอบผ่าน Swagger UI ที่ `/docs`
 - [x] อัปเดต README ให้ตรงกับ implementation จริง
+
+## Phase 9: MCP Server
+
+### Setup
+- [x] เพิ่ม `mcp[cli]` ใน `requirements.txt`
+- [x] สร้าง `app/mcp_server.py` — MCP server entry point (ใช้ stdio transport)
+
+### Tools — reuse `task_service.py` ห้าม duplicate logic
+- [x] `list_tasks` — รับ optional filter params (`status`, `priority`, `due_before`, `sort_by`, `order`)
+- [x] `get_task` — รับ `task_id`
+- [x] `create_task` — รับ `title`, optional `description`, `priority`, `due_date`
+- [x] `update_task` — รับ `task_id` + fields ที่ต้องการแก้ไข (ทุก field optional)
+- [x] `delete_task` — รับ `task_id`
+- [x] `update_task_status` — รับ `task_id`, `status`
+
+### Verify
+- [x] ทดสอบผ่าน `mcp dev app/mcp_server.py` (MCP Inspector)
+- [x] อัปเดต README เพิ่ม section MCP Server
